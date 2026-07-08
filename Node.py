@@ -3,7 +3,7 @@ class Node():
     def __init__(self,name,path,children):
         self.name = ''
         def validateFileName(fileName):
-            PROHIBITED = '<>:"/\|?*'
+            PROHIBITED = ['<','>',':','"','/','\\','|','?','*']
             for x in PROHIBITED:
                 if x in fileName:
                     return False

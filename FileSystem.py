@@ -72,17 +72,17 @@ class FileSystem():
         return f'{targetPath} has been edited.'
     def listDir(self,startingRoot):
         root = startingRoot
+        if not root:
+            return ''
+
         res = [f'[{root.name}]']
-        def recur(root,indent):
-            res.append(('  ' * indent)  + '└─' + '[' + root.name + ']')
-            for x in range(len(root.children)):
-                if x == len(root.children) - 1:
-                    recur(root.children[x],indent + 1)
-                else:
-                    recur(root.children[x],indent + 1)
-        for x in range(len(root.children)):
-            if x == len(root.children) - 1:
-                recur(root.children[x],1)
-            else:
-                recur(root.children[x],1)
+
+        def recur(node, prefix=''):
+            for index, child in enumerate(node.children):
+                is_last = index == len(node.children) - 1
+                branch = '└── ' if is_last else '├── '
+                res.append(prefix + branch + f'[{child.name}]')
+                child_prefix = prefix + ('    ' if is_last else '│   ')
+                recur(child, child_prefix)
+        recur(root)
         return '\n'.join(res)
