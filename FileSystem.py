@@ -70,15 +70,21 @@ class FileSystem():
         targetNode.type = newVal.type if newVal.type else targetNode.type
         targetNode.editedDate = datetime.now() if dataExists(newVal) else targetNode.editedDate
         return f'{targetPath} has been edited.'
+    def getData(self,targetPath):
+        root = self.root
+        targetNode = self.bfs(root,False,targetPath,False)
+        if not targetNode:
+            return f'{targetPath} does not exist.'
+        haveChildren = f'Content: {[x.name for x in targetNode.children]} \n' if targetNode.children else ''
+        return f' Name: {targetNode.name} \n Path: {targetNode.path} \n type: {targetNode.type} \n Created Date: {targetNode.createdDate} \n Edited Date: {targetNode.editedDate} \n ' + haveChildren
     def listDir(self,startingRoot):
         root = startingRoot
         if not root:
             return ''
-
         res = [f'[{root.name}]']
-
         def recur(node, prefix=''):
             for index, child in enumerate(node.children):
+                print(self.getData(child.path))
                 is_last = index == len(node.children) - 1
                 branch = '└── ' if is_last else '├── '
                 res.append(prefix + branch + f'[{child.name}]')
