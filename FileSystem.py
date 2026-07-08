@@ -70,4 +70,19 @@ class FileSystem():
         targetNode.type = newVal.type if newVal.type else targetNode.type
         targetNode.editedDate = datetime.now() if dataExists(newVal) else targetNode.editedDate
         return f'{targetPath} has been edited.'
-    
+    def listDir(self,startingRoot):
+        root = startingRoot
+        res = [f'[{root.name}]']
+        def recur(root,indent):
+            res.append(('  ' * indent)  + '└─' + '[' + root.name + ']')
+            for x in range(len(root.children)):
+                if x == len(root.children) - 1:
+                    recur(root.children[x],indent + 1)
+                else:
+                    recur(root.children[x],indent + 1)
+        for x in range(len(root.children)):
+            if x == len(root.children) - 1:
+                recur(root.children[x],1)
+            else:
+                recur(root.children[x],1)
+        return '\n'.join(res)
