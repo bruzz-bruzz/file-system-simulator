@@ -5,8 +5,8 @@ export default class Node{
     type:string;
     createdDate:Date;
     editedDate:Date;
-    children:Node[] | undefined[]
-    constructor(name:string,path:string,children:Node[] | undefined[]){
+    children:Node[]
+    constructor(name:string,path:string,children:Node[]){
         this.name = ''
         this.path = path
         this.data = ''
