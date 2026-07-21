@@ -2,13 +2,7 @@ from datetime import datetime
 class Node():
     def __init__(self,name,path,children):
         self.name = ''
-        def validateFileName(fileName):
-            PROHIBITED = ['<','>',':','"','/','\\','|','?','*']
-            for x in PROHIBITED:
-                if x in fileName:
-                    return False
-            return True
-        if validateFileName(name):
+        if self.validateFileName(name):
             self.name = name
         else:
             raise ValueError(f'File names must not include any of these symbols {' '.join(['<','>',':','"','/','\\','|','?','*'])}*')
@@ -18,3 +12,9 @@ class Node():
         self.createdDate = datetime.now()
         self.editedDate = datetime.now()
         self.children = children
+    def validateFileName(self,fileName):
+        PROHIBITED = ['<','>',':','"','/','\\','|','?','*']
+        for x in PROHIBITED:
+            if x in fileName:
+                return False
+        return True

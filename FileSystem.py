@@ -1,4 +1,3 @@
-from Node import Node
 from collections import deque
 from datetime import datetime
 class FileSystem():
@@ -37,12 +36,26 @@ class FileSystem():
                     stk.append(x)
             res.append(p if returnVal == False else p.name)
         return None if not returnArr else res
+    def doesPathExist(self,path):
+        root = self.root
+        res = self.dfs(root,False,path,False)
+        return True if res else False
     def addData(self,parentPath,newNode):
         root = self.root
         parentNode = self.bfs(root,False,parentPath,False)
         if not parentNode:
             return f'{parentPath} does not exist.'
-        newNode.path = parentNode.path + '/' + newNode.name
+        if parentNode.type == 'FILE':
+            return f'{parentPath} is a file, not a folder.'
+        dupeCount = 0
+        for x in parentNode.children:
+            if x.name.split(' ')[0] == newNode.name:
+                dupeCount += 1
+        if dupeCount > 0:
+            newNode.name = f'{newNode.name} ({dupeCount})'
+        name = newNode.name.split('.')
+        newNode.path = parentNode.path + '/' + name[0] + f' ({dupeCount})' + ('.' + name[1] if len(name) > 1 else '') if dupeCount > 0 else parentNode.path + '/' + newNode.name
+        newNode.name = newNode.name + ('.' + name[1] if len(name) > 1 else '')
         parentNode.children.append(newNode)
         return f'{newNode.name} has been added successfully.'
     def deleteData(self,parentPath,targetNode):
@@ -57,26 +70,48 @@ class FileSystem():
                     return f'{targetNode} has been deleted from {parentPath}.'
         else:
             return f'{targetNode} does not exist in {parentPath}.'
-    def editData(self,targetPath,newVal):
-        root = self.root
-        targetNode = self.bfs(root,False,targetPath,False)
+    def editParentData(self,path,operation,newData):
+        targetNode = self.bfs(self.root,False,path,False)
         if not targetNode:
-            return f'{targetPath} does not exist.'
-        def dataExists(data):
-            return data.name or data.path or data.data or data.type
-        targetNode.name = newVal.name if newVal.name else targetNode.name
-        targetNode.path = newVal.path if newVal.path else targetNode.path
-        targetNode.data = newVal.data if newVal.data else targetNode.data
-        targetNode.type = newVal.type if newVal.type else targetNode.type
-        targetNode.editedDate = datetime.now() if dataExists(newVal) else targetNode.editedDate
-        return f'{targetPath} has been edited.'
+            return f'{path} does not exist.'
+        if operation == 'ADD':
+            targetNode.children.append(newData)
+            return f'{newData.name} has been added to {path}.'
+        elif operation == 'REMOVE':
+            for x in range(len(targetNode.children)):
+                if targetNode.children[x].name == newData:
+                    targetNode.children.pop(x)
+                    return f'{newData} has been deleted from {path}.'
+            return f'{newData} does not exist in {path}.'
+    def moveNode(self,originalPath,newPath):
+        targetNode = self.bfs(self.root,False,originalPath,False)
+        if not targetNode:
+            return f'{originalPath} does not exist.'
+        newParentNode = self.bfs(self.root,False,newPath,False)
+        self.editParentData('/'.join(originalPath.split('/')[:-1]),'REMOVE',targetNode.name)
+        if not newParentNode:
+            return f'{newPath} does not exist.'
+        if newParentNode.type != 'folder':
+            return f'{newPath} is not a folder.'
+        self.addData(newPath,targetNode)
+        self.editParentData('/'.join(originalPath.split('/')[:-1]),'REMOVE',targetNode.name)
+        return f'{targetNode.name} has been moved from {originalPath} to {newPath}.'
+    def overwriteData(self,filePath,newData):
+        targetNode = self.bfs(self.root,False,filePath,False)
+        if not targetNode:
+            return f'{filePath} does not exist.'
+        if targetNode.type != 'file':
+            return f'{filePath} is not a file.'
+        targetNode.data = newData
+        targetNode.editedDate = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        return f'{filePath} has been overwritten successfully.'
     def getData(self,targetPath):
         root = self.root
         targetNode = self.bfs(root,False,targetPath,False)
         if not targetNode:
             return f'{targetPath} does not exist.'
         haveChildren = f'Content: {[x.name for x in targetNode.children]} \n' if targetNode.children else ''
-        return f' Name: {targetNode.name} \n Path: {targetNode.path} \n type: {targetNode.type} \n Created Date: {targetNode.createdDate} \n Edited Date: {targetNode.editedDate} \n ' + haveChildren
+        return f' Name: {targetNode.name} \n Path: {targetNode.path} \n Type: {targetNode.type} \n Data: \n {targetNode.data if len(targetNode.data) > 0 else ''} \n Created Date: {targetNode.createdDate} \n Edited Date: {targetNode.editedDate} \n ' + haveChildren
     def listDir(self,startingRoot):
         root = startingRoot
         if not root:
@@ -84,7 +119,6 @@ class FileSystem():
         res = [f'[{root.name}]']
         def recur(node, prefix=''):
             for index, child in enumerate(node.children):
-                print(self.getData(child.path))
                 is_last = index == len(node.children) - 1
                 branch = '└── ' if is_last else '├── '
                 res.append(prefix + branch + f'[{child.name}]')

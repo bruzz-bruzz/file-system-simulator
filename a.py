@@ -35,7 +35,6 @@ def generate_test_filesystem():
 
     for name in ["utils.py", "config.json"]:
         fs.addData("root/src/helpers", create_node(name))
-
     for name in ["test_main.py", "test_utils.py"]:
         fs.addData("root/src/tests", create_node(name))
 
@@ -50,5 +49,6 @@ def generate_test_filesystem():
 
 if __name__ == "__main__":
     fs, root = generate_test_filesystem()
+    print(fs.doesPathExist("root/src/helpers/utils.py/l"))
     print(fs.listDir(root))
 #│
