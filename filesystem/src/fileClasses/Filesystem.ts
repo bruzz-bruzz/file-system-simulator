@@ -90,7 +90,6 @@ export default class FileSystem {
                 dupeCount += 1
             }    
             }else {
-                console.log(x.name.split('.')[0].split(' ')[0] + x.name.split('.')[1])
                 if(x.name.split('.')[0].split(' ')[0] + '.' + x.name.split('.')[1] === newNode.name){
                     dupeCount += 1
                 }
