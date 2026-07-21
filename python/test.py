@@ -1,5 +1,5 @@
-from FileSystem import FileSystem
-from Node import Node
+from python.FileSystem import FileSystem
+from python.Node import Node
 
 
 def create_node(name):
