@@ -1,0 +1,1 @@
+console.log("ABC".slice(1,2))

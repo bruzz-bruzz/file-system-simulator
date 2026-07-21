@@ -91,7 +91,7 @@ export default class FileSystem {
             }    
             }else {
                 if(x.name.split('.')[0].split(' ')[0] + '.' + x.name.split('.')[1] === newNode.name){
-                    dupeCount = x.name.split('.')[0].length === 2 ? Math.max(dupeCount, parseInt(x.name.split('.')[0].split(' ')[1].slice(1,3))) + 1 : dupeCount + 1
+                    dupeCount = x.name.split('.')[0].length === 2 ? Math.max(dupeCount, parseInt(x.name.split('.')[0].split(' ')[1].slice(1,2))) + 1 : dupeCount + 1
                 }
             }
         }
