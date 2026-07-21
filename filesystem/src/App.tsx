@@ -189,9 +189,10 @@ export default function App(){
                         setAddPath(e.target.value)
                     }} />
                     <label>New file/folder name: {addNode.name}</label>
-                    <input type='text' className='border border-black rounded-lg p-2 text-center' value={addNode.name} onChange={(e)=>[
+                    <p>File names must not include any of these symbols {'< > : " / \\ | ? *'}</p>
+                    <input type='text' className='border border-black rounded-lg p-2 text-center' value={addNode.name} onChange={(e)=>{
                         setAddNode(new Node(e.target.value,'',[]))
-                    ]} />
+                    }} />
                     <p>{operationResult}</p>
                 </div>
             )}

@@ -77,6 +77,16 @@ export default class FileSystem {
     }
     addData(parentPath: string, newNode: Node): string {
         const parentNode = this.bfs(this.root, false, parentPath, false) as Node | null;
+        function getIndex(s:string,target:string) : number {
+            let right = s.length - 1
+            while(right > 0){
+                if(s[right] === target){
+                    return right
+                }
+                right -= 1
+            }
+            return -1
+        }
         if (!parentNode) {
             return `${parentPath} does not exist.`;
         }
@@ -85,13 +95,35 @@ export default class FileSystem {
         }
         let dupeCount = 0
         for(let x of parentNode.children){
-            if(x.type === 'FOLDER'){
-                if(x.name.split(' ')[0] === newNode.name){
-                dupeCount += 1
-            }    
-            }else {
-                if(x.name.split('.')[0].split(' ')[0] + '.' + x.name.split('.')[1] === newNode.name){
-                    dupeCount = x.name.split('.')[0].length === 2 ? Math.max(dupeCount, parseInt(x.name.split('.')[0].split(' ')[1].slice(1,2))) + 1 : dupeCount + 1
+            if(x.type === 'FOLDER' && x.type === newNode.type){
+                if(x.name.includes("(") && x.name.includes(")")){
+                    const [startIdx,endIdx] = [getIndex(x.name,'('),getIndex(x.name,')')]
+                    console.log(startIdx,endIdx,x.name.slice(startIdx + 1,endIdx))
+                    const parsed = parseInt(x.name.slice(startIdx + 1,endIdx))
+                    if(!isNaN(parsed)){
+                        if(x.name.slice(0,startIdx) === newNode.name){
+                            dupeCount = Math.max(dupeCount,parsed) + 1
+                        }
+                    } else {
+                        dupeCount += 1
+                    }
+                }
+                else if(x.name === newNode.name){
+                    dupeCount += 1
+                }    
+            }else if (x.type === "FILE" && x.type === newNode.type){
+                if(x.name.includes("(") && x.name.includes(")")){
+                    const [startIdx,endIdx] = [getIndex(x.name,'('),getIndex(x.name,')')]
+                    const parsed = parseInt(x.name.slice(startIdx + 1,endIdx))
+                    if(!isNaN(parsed)){
+                        if(x.name.slice(0,startIdx) === newNode.name){
+                            dupeCount = Math.max(dupeCount,parsed) + 1
+                        }
+                    } else {
+                        dupeCount += 1
+                    }
+                } else if(x.name === newNode.name){
+                    dupeCount += 1
                 }
             }
         }

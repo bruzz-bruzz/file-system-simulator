@@ -1,1 +1,1 @@
-console.log("ABC".slice(1,2))
+console.log(Math.max(3,NaN))
