@@ -135,7 +135,6 @@ export default class FileSystem {
         newNode.editedDate = new Date()
         return `${newNode.name} has been added successfully.`;
     }
-
     deleteData(parentPath: string, targetNode: string): string {
         const parentNode = this.bfs(this.root, false, parentPath, false) as Node | null;
         if (!parentNode) {
@@ -177,6 +176,10 @@ export default class FileSystem {
         }
     }
     moveNode(originalPath:string,newPath:string) : string {
+        console.log(originalPath,newPath)
+        if(originalPath === newPath){
+            return `Original path must be different from the new path.`
+        }
         const targetNode = this.bfs(this.root,false,originalPath,false) as Node | null
         if(!targetNode){
             return `${originalPath} does not exist.`
